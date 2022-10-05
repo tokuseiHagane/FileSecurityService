@@ -1,5 +1,5 @@
 # Возможные импорты
-
+import hashlib
 
 class FileSecurityService:
     # Блок отвественности Кирилла
@@ -38,10 +38,18 @@ class FileSecurityService:
         pass
 
     # Блок ответственности Михаила
-    def __get_file(self):
+    def get_file(self, file_name: str):
+        #print(self.read_file(file_name))
+        #my_hash1 = hashlib.md5()
+        #my_hash1.update(self.read_file(file_name))
+        #print(str(my_hash1.hexdigest()))
         pass
 
-    def __read_file(self):
+    def read_file(self, file_name):
+        file_data = None
+        with open(mode='r+b', file=file_name) as f:
+            file_data = f.read()
+            return file_data
         pass
 
     def __write_file(self):
@@ -53,4 +61,5 @@ class FileSecurityService:
 
 if __name__ == '__main__':
     app = FileSecurityService()
-    app.run()
+    app.get_file('kok.txt')
+    #app.run()
