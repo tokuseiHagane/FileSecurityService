@@ -1,5 +1,6 @@
 # Возможные импорты
 import base64
+import binascii
 from math import floor
 
 
@@ -15,11 +16,15 @@ class FileSecurityService:
         pass
 
     # Блок ответственности Константина
-    def key_char_at(self, key, i):
-        return key[floor(i % len(key))]
-
     def decode_base64(self, to_decode: bytes) -> bytes:
-        return base64.b64decode(to_decode)
+        try:
+            return base64.b64decode(to_decode)
+        except binascii.Error as ascii:
+            print(f'got wrong bytes and error "{ascii}"')
+            return b''
+        except TypeError as te:
+            print(f'got non bytes and error "{te}"')
+            return b''
 
     def encode_base64(self, to_encode: bytes) -> bytes:
         return base64.b64encode(to_encode)

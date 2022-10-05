@@ -39,16 +39,11 @@ class TestMethodsEncodeDecode(TestFileSecurityService):
                          second=b'')
 
     def test_base64_decode_not_bytes(self):
-        for val in [-1, 0, 1, 234, 12.43, True, False]:
-            with self.assertRaises(TypeError):
-                self.service.decode_base64(val)
-        with self.assertRaises(binascii.Error):
-            self.service.decode_base64('some string')
+        for val in [-1, 0, 1, 234, 12.43, True, False, 'some string']:
+            self.assertEqual(self.service.decode_base64(val), b'')
 
     def test_base64_decode_not_base64_bytes(self):
-        with self.assertRaises(binascii.Error):
-            self.service.decode_base64(b'some bytes to pass')
+        self.assertEqual(self.service.decode_base64(b'some bytes to pass'), b'')
 
     def test_base64_decode_got_none(self):
-        with self.assertRaises(TypeError):
-            self.service.decode_base64(None)
+        self.assertEqual(self.service.decode_base64(None), b'')
