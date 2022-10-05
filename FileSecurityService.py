@@ -1,4 +1,6 @@
 # Возможные импорты
+import base64
+from math import floor
 
 
 class FileSecurityService:
@@ -13,28 +15,31 @@ class FileSecurityService:
         pass
 
     # Блок ответственности Константина
-    def __decode_1(self):
+    def key_char_at(self, key, i):
+        return key[floor(i % len(key))]
+
+    def decode_base64(self, to_decode: bytes) -> bytes:
+        return base64.b64decode(to_decode)
+
+    def encode_base64(self, to_encode: bytes) -> bytes:
+        return base64.b64encode(to_encode)
+
+    def decode_2(self):
         pass
 
-    def __encode_1(self):
+    def encode_2(self):
         pass
 
-    def __decode_2(self):
+    def decode_3(self):
         pass
 
-    def __encode_2(self):
+    def encode_3(self):
         pass
 
-    def __decode_3(self):
+    def decode_4(self):
         pass
 
-    def __encode_3(self):
-        pass
-
-    def __decode_4(self):
-        pass
-
-    def __encode_4(self):
+    def encode_4(self):
         pass
 
     # Блок ответственности Михаила
@@ -53,4 +58,4 @@ class FileSecurityService:
 
 if __name__ == '__main__':
     app = FileSecurityService()
-    app.run()
+    print(app.decode_base64(b'some bytes to pass'))
