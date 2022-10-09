@@ -44,8 +44,15 @@ class FileSecurityService:
         return b''
 
     def set_base64_key(self, password: str):
-        if type(password) is not str:
-            raise TypeError
+        try:
+            key = hashlib.md5(password.encode('utf-8')).hexdigest()
+            self.encoded_password = self.encode_base64(key.encode('utf-8'))
+        except TypeError as te:
+            print(f'got not str and error "{te}"')
+            return -1
+        except AttributeError as ae:
+            print(f'got not str and error "{ae}"')
+            return -1
         return 0
 
     def get_base64_key(self):
