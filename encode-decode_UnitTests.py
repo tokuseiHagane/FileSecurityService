@@ -57,12 +57,10 @@ class TestMethodsEncodeDecode(TestFileSecurityService):
 
     def test_fernet_encode_not_bytes(self):
         for val in [-1, 0, 1, 234, 'some string', 12.43, True, False]:
-            with self.assertRaises(TypeError):
-                self.service.encode_fernet(val)
+            self.assertEqual(self.service.encode_fernet(val), b'')
 
     def test_fernet_encode_got_none(self):
-        with self.assertRaises(TypeError):
-            self.service.encode_fernet(None)
+        self.assertEqual(self.service.encode_fernet(None), b'')
 
     def test_fernet_decode_good(self):
         self.assertIsInstance(self.service.decode_fernet(b'c29tZSBieXRlcyB0byBwYXNz'), bytes)

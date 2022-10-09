@@ -32,21 +32,31 @@ class FileSecurityService:
         return base64.b64encode(to_encode)
 
     def decode_fernet(self, to_decode: bytes) -> bytes:
-        if type(to_decode) is not bytes:
+        try:
+            decoded = Fernet(self.encoded_password).decrypt(to_decode)
+        except TypeError as te:
+            print(f'got not bytes and error "{te}"')
             return b''
-        return b''
+        except ValueError as ve:
+            print(f'got not bytes and error "{ve}"')
+            return b''
+        return decoded
 
     def encode_fernet(self, to_encode: bytes) -> bytes:
-        if type(to_encode) is not bytes:
-            if type(to_encode) is None:
-                return b''
-            raise TypeError
-        return b''
+        try:
+            cipher = Fernet(self.encoded_password).encrypt(to_encode)
+        except TypeError as te:
+            print(f'got not bytes and error "{te}"')
+            return b''
+        except ValueError as ve:
+            print(f'got not bytes and error "{ve}"')
+            return b''
+        return cipher
 
     def set_base64_key(self, password: str):
         try:
             key = hashlib.md5(password.encode('utf-8')).hexdigest()
-            self.encoded_password = self.encode_base64(key.encode('utf-8'))
+            self.encoded_password = base64.urlsafe_b64encode(key.encode('utf-8'))
         except TypeError as te:
             print(f'got not str and error "{te}"')
             return -1
