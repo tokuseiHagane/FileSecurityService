@@ -47,3 +47,33 @@ class TestMethodsEncodeDecode(TestFileSecurityService):
 
     def test_base64_decode_got_none(self):
         self.assertEqual(self.service.decode_base64(None), b'')
+
+    def test_fernet_encode_good(self):
+        self.assertIsInstance(self.service.encode_fernet(b'some bytes to pass'), bytes)
+
+    def test_fernet_encode_empty_bytes(self):
+        self.assertEqual(first=self.service.encode_fernet(b''),
+                         second=b'')
+
+    def test_fernet_encode_not_bytes(self):
+        for val in [-1, 0, 1, 234, 'some string', 12.43, True, False]:
+            with self.assertRaises(TypeError):
+                self.service.encode_fernet(val)
+
+    def test_fernet_encode_got_none(self):
+        with self.assertRaises(TypeError):
+            self.service.encode_fernet(None)
+
+    def test_fernet_decode_good(self):
+        self.assertIsInstance(self.service.decode_fernet(b'c29tZSBieXRlcyB0byBwYXNz'), bytes)
+
+    def test_fernet_decode_empty_bytes(self):
+        self.assertEqual(first=self.service.decode_fernet(b''),
+                         second=b'')
+
+    def test_fernet_decode_not_bytes(self):
+        for val in [-1, 0, 1, 234, 12.43, True, False, 'some string']:
+            self.assertEqual(self.service.decode_fernet(val), b'')
+
+    def test_fernet_decode_got_none(self):
+        self.assertEqual(self.service.decode_fernet(None), b'')

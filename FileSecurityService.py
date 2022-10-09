@@ -1,7 +1,7 @@
 # Возможные импорты
-import base64
 import binascii
-from math import floor
+import base64, hashlib
+from cryptography.fernet import Fernet
 
 
 class FileSecurityService:
@@ -29,22 +29,16 @@ class FileSecurityService:
     def encode_base64(self, to_encode: bytes) -> bytes:
         return base64.b64encode(to_encode)
 
-    def decode_2(self):
+    def decode_fernet(self, to_decode: bytes) -> bytes:
         pass
 
-    def encode_2(self):
+    def encode_fernet(self, to_encode: bytes) -> bytes:
         pass
 
     def decode_3(self):
         pass
 
     def encode_3(self):
-        pass
-
-    def decode_4(self):
-        pass
-
-    def encode_4(self):
         pass
 
     # Блок ответственности Михаила
