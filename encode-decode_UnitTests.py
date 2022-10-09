@@ -77,3 +77,13 @@ class TestMethodsEncodeDecode(TestFileSecurityService):
 
     def test_fernet_decode_got_none(self):
         self.assertEqual(self.service.decode_fernet(None), b'')
+
+    def test_set_base64_key(self):
+        self.assertEqual(self.service.set_base64_key('some password'), 0)
+
+    def test_set_base64_key_not_str(self):
+        with self.assertRaises(TypeError):
+            self.service.set_base64_key(2)
+
+    def test_get_base64_key(self):
+        self.assertIsInstance(self.service.get_base64_key(), bytes)

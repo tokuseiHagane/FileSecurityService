@@ -5,6 +5,8 @@ from cryptography.fernet import Fernet
 
 
 class FileSecurityService:
+    encoded_password = b''
+
     # Блок отвественности Кирилла
     def __init__(self):
         pass
@@ -30,10 +32,24 @@ class FileSecurityService:
         return base64.b64encode(to_encode)
 
     def decode_fernet(self, to_decode: bytes) -> bytes:
-        pass
+        if type(to_decode) is not bytes:
+            return b''
+        return b''
 
     def encode_fernet(self, to_encode: bytes) -> bytes:
-        pass
+        if type(to_encode) is not bytes:
+            if type(to_encode) is None:
+                return b''
+            raise TypeError
+        return b''
+
+    def set_base64_key(self, password: str):
+        if type(password) is not str:
+            raise TypeError
+        return 0
+
+    def get_base64_key(self):
+        return self.encoded_password
 
     def decode_3(self):
         pass
