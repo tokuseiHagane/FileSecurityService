@@ -71,25 +71,49 @@ class FileSecurityService:
         return self.encoded_password
 
     def decode_rsa(self, to_decode: bytes):
-        pass
+        try:
+            decoded = rsa.decrypt(to_decode, self.private_key)
+        except rsa.pkcs1.DecryptionError as de:
+            print(f'decryption failed with error {de}')
+            return b''
+        except TypeError as de:
+            print(f'decryption failed with error {de}')
+            return b''
+        return decoded
 
     def encode_rsa(self, to_encode: bytes):
-        pass
+        try:
+            if type(to_encode) is not bytes or to_encode == b'':
+                raise TypeError
+            encoded = rsa.encrypt(to_encode, self.public_key)
+        except TypeError as te:
+            print(f'encryption failed with error {te}')
+            return b''
+        return encoded
 
     def read_rsa_public_key(self, file_path: str):
-        pass
+        with open(file_path, mode='rb') as f:
+            self.public_key = rsa.PublicKey.load_pkcs1(f.read())
+        return self.public_key
 
     def read_rsa_private_key(self, file_path: str):
-        pass
+        with open(file_path, mode='rb') as f:
+            self.private_key = rsa.PrivateKey.load_pkcs1(f.read())
+        return self.private_key
 
     def make_rsa_public_private_key(self):
-        pass
+        self.public_key, self.private_key = rsa.newkeys(512)
+        return [self.public_key, self.private_key]
 
     def save_rsa_public_key(self):
-        pass
+        with open('public.pem', mode='wb+') as f:
+            f.write(self.public_key.save_pkcs1())
+        return 0
 
     def save_rsa_private_key(self):
-        pass
+        with open('private.pem', mode='wb+') as f:
+            f.write(self.private_key.save_pkcs1())
+        return 0
 
     # Блок ответственности Михаила
     def __get_file(self):
