@@ -13,6 +13,7 @@ class TestFileSecurityService(TestCase):
 # base_64
 # fernet
 class TestMethodsEncodeDecode(TestFileSecurityService):
+    # Base64
     def test_base64_encode_good(self):
         self.assertEqual(first=self.service.encode_base64(b'some bytes to pass'),
                          second=b'c29tZSBieXRlcyB0byBwYXNz')
@@ -48,6 +49,7 @@ class TestMethodsEncodeDecode(TestFileSecurityService):
     def test_base64_decode_got_none(self):
         self.assertEqual(self.service.decode_base64(None), b'')
 
+    # Fernet
     def test_fernet_encode_good(self):
         self.assertIsInstance(self.service.encode_fernet(b'some bytes to pass'), bytes)
 
@@ -84,3 +86,50 @@ class TestMethodsEncodeDecode(TestFileSecurityService):
 
     def test_get_base64_key(self):
         self.assertIsInstance(self.service.get_base64_key(), bytes)
+
+    # RSA
+    def test_rsa_encode_good(self):
+        self.assertIsInstance(self.service.encode_rsa(b'some bytes to pass'), bytes)
+
+    def test_rsa_encode_empty_bytes(self):
+        self.assertEqual(first=self.service.encode_rsa(b''),
+                         second=b'')
+
+    def test_rsa_encode_not_bytes(self):
+        for val in [-1, 0, 1, 234, 'some string', 12.43, True, False]:
+            self.assertEqual(self.service.encode_rsa(val), b'')
+
+    def test_rsa_encode_got_none(self):
+        self.assertEqual(self.service.encode_rsa(None), b'')
+
+    def test_rsa_decode_good(self):
+        self.assertIsInstance(self.service.decode_rsa(b'c29tZSBieXRlcyB0byBwYXNz'), bytes)
+
+    def test_rsa_decode_empty_bytes(self):
+        self.assertEqual(first=self.service.decode_rsa(b''),
+                         second=b'')
+
+    def test_rsa_decode_not_bytes(self):
+        for val in [-1, 0, 1, 234, 12.43, True, False, 'some string']:
+            self.assertEqual(self.service.decode_rsa(val), b'')
+
+    def test_rsa_decode_got_none(self):
+        self.assertEqual(self.service.decode_rsa(None), b'')
+
+    def test_make_rsa_public_private_key(self):
+        self.assertEqual(self.service.make_rsa_public_private_key(),
+                         [self.service.public_key, self.service.private_key])
+
+    def test_save_rsa_public_key(self):
+        self.assertEqual(self.service.save_rsa_public_key(), 0)
+
+    def test_save_rsa_private_key(self):
+        self.assertEqual(self.service.save_rsa_private_key(), 0)
+
+    def test_read_rsa_public_key(self):
+        self.assertIsInstance(self.service.read_rsa_public_key('publickey.pem'), bytes)
+
+    def test_read_rsa_private_key(self):
+        self.assertIsInstance(self.service.read_rsa_public_key('privatekey.pem'), bytes)
+
+

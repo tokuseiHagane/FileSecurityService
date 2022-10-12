@@ -2,10 +2,12 @@
 import binascii
 import base64, hashlib
 from cryptography.fernet import Fernet
+import rsa
 
 
 class FileSecurityService:
     encoded_password = b''
+    public_key, private_key = None, None
 
     # Блок отвественности Кирилла
     def __init__(self):
@@ -68,10 +70,25 @@ class FileSecurityService:
     def get_base64_key(self):
         return self.encoded_password
 
-    def decode_3(self):
+    def decode_rsa(self, to_decode: bytes):
         pass
 
-    def encode_3(self):
+    def encode_rsa(self, to_encode: bytes):
+        pass
+
+    def read_rsa_public_key(self, file_path: str):
+        pass
+
+    def read_rsa_private_key(self, file_path: str):
+        pass
+
+    def make_rsa_public_private_key(self):
+        pass
+
+    def save_rsa_public_key(self):
+        pass
+
+    def save_rsa_private_key(self):
         pass
 
     # Блок ответственности Михаила
