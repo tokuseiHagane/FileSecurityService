@@ -3,6 +3,8 @@ import binascii
 import base64, hashlib
 from cryptography.fernet import Fernet
 import rsa
+from os import listdir
+from os.path import isfile, join
 
 
 class FileSecurityService:
@@ -14,10 +16,70 @@ class FileSecurityService:
         pass
 
     def run(self):
-        pass
+        while True:
+            files_list = self.get_list_of_files()
+            print('Файлы в директории: ' + ', '.join(files_list))
+            print('\nВыберите действие:\nВыход - 0\n'
+                  'base64 - 1\n'
+                  'rsa - 2\n'
+                  'fernet - 3\n')
 
-    def __gui_init(self):
-        pass
+            choice = int(input("Действие: "))
+
+            if choice == 0:
+                break
+            elif choice == 1:
+                print('\nВыберите операцию:\n'
+                      'Кодировать - 1\n'
+                      'Декодировать - 2\n')
+                option = int(input("Операция: "))
+                if option == 1:
+                    for file in files_list:
+                        self.get_files(file, 'base64', 'encryption')
+                    pass #file_name: str, action: str, tipe_encryption: str, key=None
+                elif option == 2:
+                    for file in files_list:
+                        self.get_files(file, 'base64', 'decoding')
+            elif choice == 2:
+                print('\nВыберите операцию:\n'
+                      'Кодировать - 1\n'
+                      'Декодировать - 2\n')
+                option = int(input("Операция: "))
+                if option == 1:
+                    for file in files_list:
+                        if self.check_rsa_keys() == -1:
+                            self.make_rsa_public_private_key()
+                            self.save_rsa_private_key()
+                            self.save_rsa_public_key()
+                        self.get_file(file, 'rsa', 'decoding')
+                elif option == 2:
+                    if self.check_rsa_keys() == -1:
+                        self.make_rsa_public_private_key()
+                        self.save_rsa_private_key()
+                        self.save_rsa_public_key()
+                    for file in files_list:
+                        self.get_files(file, 'rsa', 'decoding')
+            elif choice == 3:
+                print('\nВыберите операцию:\n'
+                      'Кодировать - 1\n'
+                      'Декодировать - 2\n')
+                option = int(input("Операция: "))
+                key = input('Пароль для fernet: ')
+                if option == 1:
+                    self.get_files(file, 'rsa', 'encryption', key)
+                elif option == 2:
+                    self.get_files(file, 'rsa', 'decoding', key)
+
+    def get_list_of_files(self):
+        onlyfiles = [f for f in listdir('./files_to_work_with') if isfile(join('./files_to_work_with', f))]
+        return onlyfiles
+
+    def check_rsa_keys(self):
+        files = [f for f in listdir('./') if isfile(join('./', f))]
+        if 'public.pem' in files and 'private.pem' in files:
+            return 0
+        else:
+            return -1
 
     # Блок ответственности Константина
     def decode_base64(self, to_decode: bytes) -> bytes:
@@ -164,7 +226,6 @@ class FileSecurityService:
             file_date.write(fil)
             file_date.close()
         return str(file_date)
-
 
 
 if __name__ == '__main__':
