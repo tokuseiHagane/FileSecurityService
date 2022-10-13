@@ -116,19 +116,58 @@ class FileSecurityService:
         return 0
 
     # Блок ответственности Михаила
-    def __get_file(self):
-        pass
+    def get_file(self, file_name: str, action: str, tipe_encryption: str, key=None):
+        f = self.read_file(file_name)
+        fil = None
+        if action == 'encryption':
+            if tipe_encryption == 'rsa':
+                self.read_rsa_public_key('./public.pem')
+                self.read_rsa_private_key('./private.pem')
+                fil = self.encode_rsa(f)
+            if tipe_encryption == 'fernet':
+                self.set_base64_key(key)
+                fil = self.encode_fernet(f)
+            if tipe_encryption == 'base64':
+                fil = self.encode_base64(f)
+                print(fil)
+        if action == 'decoding':
+            if tipe_encryption == 'rsa':
+                self.read_rsa_public_key('./public.pem')
+                self.read_rsa_private_key('./private.pem')
+                fil = self.decode_rsa(f)
+            if tipe_encryption == 'fernet':
+                self.set_base64_key(key)
+                fil = self.decode_fernet(f)
+            if tipe_encryption == 'base64':
+                fil = self.decode_base64(f)
+        return fil
 
-    def __read_file(self):
-        pass
+    def read_file(self, file_name):
+        file_data = None
+        path = f'files_to_work_with/{file_name}'
+        with open(mode='r+b', file=path) as f:
+            file_data = f.read()
+            return file_data
 
-    def __write_file(self):
-        pass
+    def write_file(self, fil, file_name: str, action, tipe_encryption):
+        file_date = None
+        if action == 'encryption':
+            path = f'files_to_work_with/{file_name}.{tipe_encryption}'
+            file_date = open(mode='w+b', file=path)
+            file_date.write(fil)
+            file_date.close()
+        if action == 'decoding':
+            f = file_name.split('.')
+            f = '.'.join(f[:-1])
+            path = f'files_to_work_with/{f}'
+            file_date = open(mode='w+b', file=path)
+            file_date.write(fil)
+            file_date.close()
+        return str(file_date)
 
-    def __create_file(self):
-        pass
 
 
 if __name__ == '__main__':
     app = FileSecurityService()
-    print(app.decode_base64(b'some bytes to pass'))
+    app.run()
+
