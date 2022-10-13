@@ -169,8 +169,5 @@ class FileSecurityService:
 
 if __name__ == '__main__':
     app = FileSecurityService()
-    app.write_file(b'bsdfkbsd', 'kok.txt', 'encryption', 'base64')
-    #app.run()
+    app.run()
 
-
-#RSA Barnet bais64
