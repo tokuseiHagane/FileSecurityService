@@ -59,7 +59,11 @@ class FileSecurityService:
         return onlyfiles
 
     def check_rsa_keys(self):
-        pass
+        files = [f for f in listdir('./') if isfile(join('./', f))]
+        if 'public.pem' in files and 'private.pem' in files:
+            return 0
+        else:
+            return -1
 
         # Блок ответственности Константина
         def decode_base64(self, to_decode: bytes) -> bytes:
