@@ -35,11 +35,11 @@ class FileSecurityService:
                 option = int(input("Операция: "))
                 if option == 1:
                     for file in files_list:
-                        self.get_files(file, 'base64', 'encryption')
+                        self.get_file(file, 'base64', 'encryption')
                     pass #file_name: str, action: str, tipe_encryption: str, key=None
                 elif option == 2:
                     for file in files_list:
-                        self.get_files(file, 'base64', 'decoding')
+                        self.get_file(file, 'base64', 'decoding')
             elif choice == 2:
                 print('\nВыберите операцию:\n'
                       'Кодировать - 1\n'
@@ -58,7 +58,7 @@ class FileSecurityService:
                         self.save_rsa_private_key()
                         self.save_rsa_public_key()
                     for file in files_list:
-                        self.get_files(file, 'rsa', 'decoding')
+                        self.get_file(file, 'rsa', 'decoding')
             elif choice == 3:
                 print('\nВыберите операцию:\n'
                       'Кодировать - 1\n'
@@ -66,9 +66,11 @@ class FileSecurityService:
                 option = int(input("Операция: "))
                 key = input('Пароль для fernet: ')
                 if option == 1:
-                    self.get_files(file, 'rsa', 'encryption', key)
+                    for file in files_list:
+                        self.get_file(file, 'rsa', 'encryption', key)
                 elif option == 2:
-                    self.get_files(file, 'rsa', 'decoding', key)
+                    for file in files_list:
+                        self.get_file(file, 'rsa', 'decoding', key)
 
     def get_list_of_files(self):
         onlyfiles = [f for f in listdir('./files_to_work_with') if isfile(join('./files_to_work_with', f))]
