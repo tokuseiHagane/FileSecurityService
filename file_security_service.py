@@ -16,6 +16,7 @@ from os.path import isfile, join
 
 import rsa
 from cryptography.fernet import Fernet
+from rsa import PrivateKey, PublicKey
 
 
 class FileSecurityService:
@@ -48,7 +49,7 @@ class FileSecurityService:
 
             if choice == 0:
                 break
-            elif choice == 1:
+            if choice == 1:
                 print('\nВыберите операцию:\n'
                       'Кодировать - 1\n'
                       'Декодировать - 2\n')
@@ -56,7 +57,6 @@ class FileSecurityService:
                 if option == 1:
                     for file in files_list:
                         self.get_file(file, 'base64', 'encryption')
-                    pass
                 elif option == 2:
                     for file in files_list:
                         self.get_file(file, 'base64', 'decoding')
@@ -112,8 +112,7 @@ class FileSecurityService:
         files = [f for f in listdir('./') if isfile(join('./', f))]
         if 'public.pem' in files and 'private.pem' in files:
             return 0
-        else:
-            return -1
+        return -1
 
     # Блок ответственности Константина
     @staticmethod
@@ -131,8 +130,8 @@ class FileSecurityService:
         except binascii.Error as ascii_e:
             print(f'got wrong bytes and error "{ascii_e}"')
             return b''
-        except TypeError as te:
-            print(f'got non bytes and error "{te}"')
+        except TypeError as t_error:
+            print(f'got non bytes and error "{t_error}"')
             return b''
 
     @staticmethod
@@ -158,11 +157,11 @@ class FileSecurityService:
         """
         try:
             decoded = Fernet(self.enc_password).decrypt(to_decode)
-        except TypeError as te:
-            print(f'got not bytes and error "{te}"')
+        except TypeError as t_error:
+            print(f'got not bytes and error "{t_error}"')
             return b''
-        except ValueError as ve:
-            print(f'got not bytes and error "{ve}"')
+        except ValueError as v_error:
+            print(f'got not bytes and error "{v_error}"')
             return b''
         return decoded
 
@@ -177,11 +176,11 @@ class FileSecurityService:
         """
         try:
             cipher = Fernet(self.enc_password).encrypt(to_encode)
-        except TypeError as te:
-            print(f'got not bytes and error "{te}"')
+        except TypeError as t_error:
+            print(f'got not bytes and error "{t_error}"')
             return b''
-        except ValueError as ve:
-            print(f'got not bytes and error "{ve}"')
+        except ValueError as v_error:
+            print(f'got not bytes and error "{v_error}"')
             return b''
         return cipher
 
@@ -197,11 +196,11 @@ class FileSecurityService:
         try:
             key = hashlib.md5(password.encode('utf-8')).hexdigest()
             self.enc_password = base64.urlsafe_b64encode(key.encode('utf-8'))
-        except TypeError as te:
-            print(f'got not str and error "{te}"')
+        except TypeError as t_error:
+            print(f'got not str and error "{t_error}"')
             return -1
-        except AttributeError as ae:
-            print(f'got not str and error "{ae}"')
+        except AttributeError as a_error:
+            print(f'got not str and error "{a_error}"')
             return -1
         return 0
 
@@ -224,11 +223,11 @@ class FileSecurityService:
         """
         try:
             decoded = rsa.decrypt(to_decode, self.private_key)
-        except rsa.pkcs1.DecryptionError as de:
-            print(f'decryption failed with error {de}')
+        except rsa.pkcs1.DecryptionError as d_error:
+            print(f'decryption failed with error {d_error}')
             return b''
-        except TypeError as de:
-            print(f'decryption failed with error {de}')
+        except TypeError as t_error:
+            print(f'decryption failed with error {t_error}')
             return b''
         return decoded
 
@@ -245,38 +244,38 @@ class FileSecurityService:
             bytes: закодированные байты
         """
         try:
-            if type(to_encode) is not bytes or to_encode == b'':
+            if isinstance(to_encode, bytes) or to_encode == b'':
                 raise TypeError
             encoded = rsa.encrypt(to_encode, self.public_key)
-        except TypeError as te:
-            print(f'encryption failed with error {te}')
+        except TypeError as t_error:
+            print(f'encryption failed with error {t_error}')
             return b''
         return encoded
 
-    def read_rsa_public_key(self, file_path: str) -> bytes:
+    def read_rsa_public_key(self, file_path: str) -> PublicKey:
         """Получение публичного ключа RSA.
 
         Args:
             file_path (str): путь до файла ключа
 
         Returns:
-            bytes: полученный ключ
+            rsa.PublicKey: полученный ключ
         """
-        with open(file_path, mode='rb') as f:
-            self.public_key = rsa.PublicKey.load_pkcs1(f.read())
+        with open(file_path, mode='rb') as _f:
+            self.public_key = rsa.PublicKey.load_pkcs1(_f.read())
         return self.public_key
 
-    def read_rsa_private_key(self, file_path: str) -> bytes:
+    def read_rsa_private_key(self, file_path: str) -> PrivateKey:
         """Получение приватного ключа RSA.
 
         Args:
             file_path (str): путь до файла ключа
 
         Returns:
-            bytes: полученный ключ
+            rsa.PrivateKey: полученный ключ
         """
-        with open(file_path, mode='rb') as f:
-            self.private_key = rsa.PrivateKey.load_pkcs1(f.read())
+        with open(file_path, mode='rb') as _f:
+            self.private_key = rsa.PrivateKey.load_pkcs1(_f.read())
         return self.private_key
 
     def make_rsa_public_private_key(self) -> list:
@@ -295,9 +294,10 @@ class FileSecurityService:
             int: результат выполнения (0 - успешно, -1 - ошибка)
         """
         try:
-            with open('public.pem', mode='wb+') as f:
-                f.write(self.public_key.save_pkcs1())
-        except Exception as e:
+            with open('public.pem', mode='wb+') as _f:
+                _f.write(self.public_key.save_pkcs1())
+        except OSError as e_msg:
+            print(str(e_msg))
             return -1
         return 0
 
@@ -308,9 +308,10 @@ class FileSecurityService:
             int: результат выполнения (0 - успешно, -1 - ошибка)
         """
         try:
-            with open('private.pem', mode='wb+') as f:
-                f.write(self.private_key.save_pkcs1())
-        except Exception as e:
+            with open('private.pem', mode='wb+') as _f:
+                _f.write(self.private_key.save_pkcs1())
+        except OSError as e_msg:
+            print(str(e_msg))
             return -1
         return 0
 
@@ -319,41 +320,41 @@ class FileSecurityService:
                  file_name: str,
                  action: str,
                  encryption: str,
-                 key: bytes = None) -> bytes:
+                 key: str = None) -> bytes:
         """Получение данных из файла.
 
         Args:
             file_name (str): имя файла для обработки
             action (str): encode или decode (кодировать, декодировать)
             encryption (str): тип кодирования/декодирования
-            key (bytes, optional): Ключ для base64. По умолчанию None.
+            key (str, optional): Ключ для base64. По умолчанию None.
 
         Returns:
             bytes: _description_
         """
-        f = self.read_file(file_name)
+        data = self.read_file(file_name)
         fil = None
         if action == 'encode':
             if encryption == 'rsa':
                 self.read_rsa_public_key('./public.pem')
                 self.read_rsa_private_key('./private.pem')
-                fil = self.encode_rsa(f)
+                fil = self.encode_rsa(data)
             if encryption == 'fernet':
                 self.set_base64_key(key)
-                fil = self.encode_fernet(f)
+                fil = self.encode_fernet(data)
             if encryption == 'base64':
-                fil = self.encode_base64(f)
+                fil = self.encode_base64(data)
                 print(fil)
         elif action == 'decode':
             if encryption == 'rsa':
                 self.read_rsa_public_key('./public.pem')
                 self.read_rsa_private_key('./private.pem')
-                fil = self.decode_rsa(f)
+                fil = self.decode_rsa(data)
             if encryption == 'fernet':
                 self.set_base64_key(key)
-                fil = self.decode_fernet(f)
+                fil = self.decode_fernet(data)
             if encryption == 'base64':
-                fil = self.decode_base64(f)
+                fil = self.decode_base64(data)
         return fil
 
     @staticmethod
@@ -367,8 +368,8 @@ class FileSecurityService:
             bytes: данные из файла
         """
         path = f'files_to_work_with/{file_name}'
-        with open(mode='r+b', file=path) as f:
-            file_data = f.read()
+        with open(mode='r+b', file=path) as _f:
+            file_data = _f.read()
         return file_data
 
     @staticmethod
@@ -390,15 +391,15 @@ class FileSecurityService:
         try:
             if action == 'encode':
                 path = f'files_to_work_with/{file_name}.{encryption}'
-                with open(file=path, mode='w+b') as f:
-                    f.write(data)
+                with open(file=path, mode='w+b') as _f:
+                    _f.write(data)
             elif action == 'decode':
                 name = '.'.join(file_name.split('.')[:-1])
                 path = f'files_to_work_with/{name}'
-                with open(file=path, mode='w+b') as f:
-                    f.write(data)
-        except Exception as e:
-            print(str(e))
+                with open(file=path, mode='w+b') as _f:
+                    _f.write(data)
+        except OSError as e_msg:
+            print(str(e_msg))
             return -1
         return 0
 

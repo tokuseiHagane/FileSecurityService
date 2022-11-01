@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 
-from FileSecurityService import FileSecurityService
+from file_security_service import FileSecurityService
 
 
 class TestFileSecurityService(TestCase):
