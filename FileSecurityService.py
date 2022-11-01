@@ -1,4 +1,6 @@
-"""Класс для шифрования/дешифрования файла с ключом или без с помощью RSA, Fernet, base64.
+"""Класс для шифрования/дешифрования файла.
+
+с ключом или без с помощью RSA, Fernet, base64.
 
 Raises:
     TypeError: не были переданны байты
@@ -17,7 +19,9 @@ from cryptography.fernet import Fernet
 
 
 class FileSecurityService:
-    """Класс для шифрования/дешифрования файла с ключом или без с помощью RSA, Fernet, base64.
+    """Класс для шифрования/дешифрования файла.
+
+    с ключом или без с помощью RSA, Fernet, base64.
 
     Raises:
         TypeError: не были переданны байты
@@ -31,7 +35,7 @@ class FileSecurityService:
 
     # Блок отвественности Кирилла
     def run(self) -> None:
-        """Запуск основного приложения."""                      
+        """Запуск основного приложения."""
         while True:
             files_list = self.get_list_of_files()
             print('Файлы в директории: ' + ', '.join(files_list))
@@ -94,7 +98,7 @@ class FileSecurityService:
 
         Returns:
             list: Список файлов
-        """        
+        """
         directory = './files_to_work_with'
         return [f for f in listdir(directory) if isfile(join(directory, f))]
 
@@ -104,7 +108,7 @@ class FileSecurityService:
 
         Returns:
             int: результат выполнения (0 - успешно, -1 - ошибка)
-        """        
+        """
         files = [f for f in listdir('./') if isfile(join('./', f))]
         if 'public.pem' in files and 'private.pem' in files:
             return 0
@@ -121,7 +125,7 @@ class FileSecurityService:
 
         Returns:
             bytes: декодированные файлы
-        """        
+        """
         try:
             return base64.b64decode(to_decode)
         except binascii.Error as ascii_e:
@@ -140,7 +144,7 @@ class FileSecurityService:
 
         Returns:
             bytes: закодированные в base64 байты
-        """        
+        """
         return base64.b64encode(to_encode)
 
     def decode_fernet(self, to_decode: bytes) -> bytes:
@@ -151,7 +155,7 @@ class FileSecurityService:
 
         Returns:
             bytes: декодированные байты
-        """        
+        """
         try:
             decoded = Fernet(self.enc_password).decrypt(to_decode)
         except TypeError as te:
@@ -170,7 +174,7 @@ class FileSecurityService:
 
         Returns:
             bytes: закодированные байты
-        """        
+        """
         try:
             cipher = Fernet(self.enc_password).encrypt(to_encode)
         except TypeError as te:
@@ -189,7 +193,7 @@ class FileSecurityService:
 
         Returns:
             int: результат выполнения (0 - успешно, -1 - ошибка)
-        """        
+        """
         try:
             key = hashlib.md5(password.encode('utf-8')).hexdigest()
             self.enc_password = base64.urlsafe_b64encode(key.encode('utf-8'))
@@ -206,7 +210,7 @@ class FileSecurityService:
 
         Returns:
             bytes: ключ base64
-        """        
+        """
         return self.enc_password
 
     def decode_rsa(self, to_decode: bytes) -> bytes:
@@ -217,7 +221,7 @@ class FileSecurityService:
 
         Returns:
             bytes: декодированные байты
-        """        
+        """
         try:
             decoded = rsa.decrypt(to_decode, self.private_key)
         except rsa.pkcs1.DecryptionError as de:
@@ -239,7 +243,7 @@ class FileSecurityService:
 
         Returns:
             bytes: закодированные байты
-        """        
+        """
         try:
             if type(to_encode) is not bytes or to_encode == b'':
                 raise TypeError
@@ -257,7 +261,7 @@ class FileSecurityService:
 
         Returns:
             bytes: полученный ключ
-        """        
+        """
         with open(file_path, mode='rb') as f:
             self.public_key = rsa.PublicKey.load_pkcs1(f.read())
         return self.public_key
@@ -270,7 +274,7 @@ class FileSecurityService:
 
         Returns:
             bytes: полученный ключ
-        """        
+        """
         with open(file_path, mode='rb') as f:
             self.private_key = rsa.PrivateKey.load_pkcs1(f.read())
         return self.private_key
@@ -280,7 +284,7 @@ class FileSecurityService:
 
         Returns:
             list: список ключей [публичный, приватный]
-        """        
+        """
         self.public_key, self.private_key = rsa.newkeys(512)
         return [self.public_key, self.private_key]
 
@@ -289,7 +293,7 @@ class FileSecurityService:
 
         Returns:
             int: результат выполнения (0 - успешно, -1 - ошибка)
-        """        
+        """
         try:
             with open('public.pem', mode='wb+') as f:
                 f.write(self.public_key.save_pkcs1())
@@ -302,7 +306,7 @@ class FileSecurityService:
 
         Returns:
             int: результат выполнения (0 - успешно, -1 - ошибка)
-        """       
+        """
         try:
             with open('private.pem', mode='wb+') as f:
                 f.write(self.private_key.save_pkcs1())
@@ -311,7 +315,11 @@ class FileSecurityService:
         return 0
 
     # Блок ответственности Михаила
-    def get_file(self, file_name: str, action: str, encryption: str, key: bytes=None) -> bytes:
+    def get_file(self,
+                 file_name: str,
+                 action: str,
+                 encryption: str,
+                 key: bytes = None) -> bytes:
         """Получение данных из файла.
 
         Args:
@@ -322,7 +330,7 @@ class FileSecurityService:
 
         Returns:
             bytes: _description_
-        """              
+        """
         f = self.read_file(file_name)
         fil = None
         if action == 'encode':
@@ -357,14 +365,17 @@ class FileSecurityService:
 
         Returns:
             bytes: данные из файла
-        """        
+        """
         path = f'files_to_work_with/{file_name}'
         with open(mode='r+b', file=path) as f:
             file_data = f.read()
         return file_data
 
     @staticmethod
-    def write_file(data: bytes, file_name: str, action: str, encryption: str) -> int:
+    def write_file(data: bytes,
+                   file_name: str,
+                   action: str,
+                   encryption: str) -> int:
         """Запись зашифрованного/расшифрованного файла.
 
         Args:
@@ -375,7 +386,7 @@ class FileSecurityService:
 
         Returns:
             int: результат выполнения (0 - успешно, -1 - ошибка)
-        """        
+        """
         try:
             if action == 'encode':
                 path = f'files_to_work_with/{file_name}.{encryption}'
