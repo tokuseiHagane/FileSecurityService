@@ -1,2 +1,5 @@
 rsa~=4.9
 cryptography~=38.0.1
+pycodestyle
+pydocstyle
+pylint

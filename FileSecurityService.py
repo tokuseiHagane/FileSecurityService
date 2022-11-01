@@ -1,10 +1,11 @@
-# Возможные импорты
+import base64
 import binascii
-import base64, hashlib
-from cryptography.fernet import Fernet
-import rsa
+import hashlib
 from os import listdir
 from os.path import isfile, join
+
+import rsa
+from cryptography.fernet import Fernet
 
 
 class FileSecurityService:
@@ -36,7 +37,7 @@ class FileSecurityService:
                 if option == 1:
                     for file in files_list:
                         self.get_file(file, 'base64', 'encryption')
-                    pass #file_name: str, action: str, tipe_encryption: str, key=None
+                    pass  # file_name: str, action: str, tipe_encryption: str, key=None
                 elif option == 2:
                     for file in files_list:
                         self.get_file(file, 'base64', 'decoding')
@@ -72,11 +73,12 @@ class FileSecurityService:
                     for file in files_list:
                         self.get_file(file, 'rsa', 'decoding', key)
 
-    def get_list_of_files(self):
-        onlyfiles = [f for f in listdir('./files_to_work_with') if isfile(join('./files_to_work_with', f))]
-        return onlyfiles
+    @staticmethod
+    def get_list_of_files():
+        return [f for f in listdir('./files_to_work_with') if isfile(join('./files_to_work_with', f))]
 
-    def check_rsa_keys(self):
+    @staticmethod
+    def check_rsa_keys():
         files = [f for f in listdir('./') if isfile(join('./', f))]
         if 'public.pem' in files and 'private.pem' in files:
             return 0
@@ -84,17 +86,19 @@ class FileSecurityService:
             return -1
 
     # Блок ответственности Константина
-    def decode_base64(self, to_decode: bytes) -> bytes:
+    @staticmethod
+    def decode_base64(to_decode: bytes) -> bytes:
         try:
             return base64.b64decode(to_decode)
-        except binascii.Error as ascii:
-            print(f'got wrong bytes and error "{ascii}"')
+        except binascii.Error as ascii_e:
+            print(f'got wrong bytes and error "{ascii_e}"')
             return b''
         except TypeError as te:
             print(f'got non bytes and error "{te}"')
             return b''
 
-    def encode_base64(self, to_encode: bytes) -> bytes:
+    @staticmethod
+    def encode_base64(to_encode: bytes) -> bytes:
         return base64.b64encode(to_encode)
 
     def decode_fernet(self, to_decode: bytes) -> bytes:
@@ -206,14 +210,15 @@ class FileSecurityService:
                 fil = self.decode_base64(f)
         return fil
 
-    def read_file(self, file_name):
-        file_data = None
+    @staticmethod
+    def read_file(file_name):
         path = f'files_to_work_with/{file_name}'
         with open(mode='r+b', file=path) as f:
             file_data = f.read()
-            return file_data
+        return file_data
 
-    def write_file(self, fil, file_name: str, action, tipe_encryption):
+    @staticmethod
+    def write_file(fil, file_name: str, action, tipe_encryption):
         file_date = None
         if action == 'encryption':
             path = f'files_to_work_with/{file_name}.{tipe_encryption}'
@@ -233,4 +238,3 @@ class FileSecurityService:
 if __name__ == '__main__':
     app = FileSecurityService()
     app.run()
-
