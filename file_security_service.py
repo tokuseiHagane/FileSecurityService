@@ -330,7 +330,7 @@ class FileSecurityService:
             key (str, optional): Ключ для base64. По умолчанию None.
 
         Returns:
-            bytes: _description_
+            bytes: данные из файла
         """
         data = self.read_file(file_name)
         fil = None
