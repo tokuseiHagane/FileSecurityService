@@ -102,7 +102,6 @@ class FileSecurityService:
         Returns:
             list: Список файлов
         """
-        some_anused_list = [str(i) for i in range(1000)]
         directory = './files_to_work_with'
         return [f for f in listdir(directory) if isfile(join(directory, f))]
 
