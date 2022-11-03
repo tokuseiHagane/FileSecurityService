@@ -17,6 +17,7 @@ from os.path import isfile, join
 import rsa
 from cryptography.fernet import Fernet
 from rsa import PrivateKey, PublicKey
+from memory_profiler import profile
 
 
 class FileSecurityService:
@@ -35,6 +36,7 @@ class FileSecurityService:
     public_key, private_key = None, None
 
     # Блок отвественности Кирилла
+    @profile
     def run(self) -> None:
         """Запуск основного приложения."""
         while True:
@@ -93,16 +95,19 @@ class FileSecurityService:
                         self.get_file(file, 'rsa', 'decoding', key)
 
     @staticmethod
+    @profile
     def get_list_of_files() -> list:
         """Получение списка файлов.
 
         Returns:
             list: Список файлов
         """
+        some_anused_list = [str(i) for i in range(1000)]
         directory = './files_to_work_with'
         return [f for f in listdir(directory) if isfile(join(directory, f))]
 
     @staticmethod
+    @profile
     def check_rsa_keys() -> int:
         """Проверка наличия файлов ключей.
 
@@ -116,6 +121,7 @@ class FileSecurityService:
 
     # Блок ответственности Константина
     @staticmethod
+    @profile
     def decode_base64(to_decode: bytes) -> bytes:
         """Докодировать из base64.
 
@@ -135,6 +141,7 @@ class FileSecurityService:
             return b''
 
     @staticmethod
+    @profile
     def encode_base64(to_encode: bytes) -> bytes:
         """Кодирование в base64.
 
@@ -146,6 +153,7 @@ class FileSecurityService:
         """
         return base64.b64encode(to_encode)
 
+    @profile
     def decode_fernet(self, to_decode: bytes) -> bytes:
         """Декодирование из Fernet.
 
@@ -165,6 +173,7 @@ class FileSecurityService:
             return b''
         return decoded
 
+    @profile
     def encode_fernet(self, to_encode: bytes) -> bytes:
         """Кодирование в Fernet.
 
@@ -184,6 +193,7 @@ class FileSecurityService:
             return b''
         return cipher
 
+    @profile
     def set_base64_key(self, password: str) -> int:
         """Установка base64 ключа.
 
@@ -204,6 +214,7 @@ class FileSecurityService:
             return -1
         return 0
 
+    @profile
     def get_base64_key(self) -> bytes:
         """Экспорт ключа base64.
 
@@ -212,6 +223,7 @@ class FileSecurityService:
         """
         return self.enc_password
 
+    @profile
     def decode_rsa(self, to_decode: bytes) -> bytes:
         """Декодирование через RSA.
 
@@ -231,6 +243,7 @@ class FileSecurityService:
             return b''
         return decoded
 
+    @profile
     def encode_rsa(self, to_encode: bytes) -> bytes:
         """Кодирование RSA.
 
@@ -252,6 +265,7 @@ class FileSecurityService:
             return b''
         return encoded
 
+    @profile
     def read_rsa_public_key(self, file_path: str) -> PublicKey:
         """Получение публичного ключа RSA.
 
@@ -265,6 +279,7 @@ class FileSecurityService:
             self.public_key = rsa.PublicKey.load_pkcs1(_f.read())
         return self.public_key
 
+    @profile
     def read_rsa_private_key(self, file_path: str) -> PrivateKey:
         """Получение приватного ключа RSA.
 
@@ -278,6 +293,7 @@ class FileSecurityService:
             self.private_key = rsa.PrivateKey.load_pkcs1(_f.read())
         return self.private_key
 
+    @profile
     def make_rsa_public_private_key(self) -> list:
         """Создание публичного и приватного ключа RSA.
 
@@ -287,6 +303,7 @@ class FileSecurityService:
         self.public_key, self.private_key = rsa.newkeys(512)
         return [self.public_key, self.private_key]
 
+    @profile
     def save_rsa_public_key(self) -> int:
         """Сохранение публичного ключа в файл.
 
@@ -301,6 +318,7 @@ class FileSecurityService:
             return -1
         return 0
 
+    @profile
     def save_rsa_private_key(self) -> int:
         """Сохранение приватного ключа в файл.
 
@@ -316,6 +334,7 @@ class FileSecurityService:
         return 0
 
     # Блок ответственности Михаила
+    @profile
     def get_file(self,
                  file_name: str,
                  action: str,
@@ -358,6 +377,7 @@ class FileSecurityService:
         return fil
 
     @staticmethod
+    @profile
     def read_file(file_name: str) -> bytes:
         """Получение файла для кодирования/декодирования.
 
@@ -373,6 +393,7 @@ class FileSecurityService:
         return file_data
 
     @staticmethod
+    @profile
     def write_file(data: bytes,
                    file_name: str,
                    action: str,
